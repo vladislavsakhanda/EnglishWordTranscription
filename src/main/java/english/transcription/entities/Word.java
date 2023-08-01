@@ -1,9 +1,9 @@
-package my.org;
+package english.transcription.entities;
 
 import java.util.Objects;
 
 public class Word {
-    private String content = "";
+    private String word = "";
     private String transcription = "";
     private String translation = "";
 
@@ -11,22 +11,22 @@ public class Word {
     }
 
     public Word(String content) {
-        this.content = content;
+        this.word = content;
     }
 
     public Word(String content, String translation) {
-        this.content = content;
+        this.word = content;
         this.translation = translation;
     }
 
     public Word(String content, String transcription, String translation) {
-        this.content = content;
+        this.word = content;
         this.transcription = transcription;
         this.translation = translation;
     }
 
-    public String getContent() {
-        return content;
+    public String getWord() {
+        return word;
     }
 
     public String getTranscription() {
@@ -37,8 +37,8 @@ public class Word {
         return translation;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setWord(String word) {
+        this.word = word;
     }
 
     public void setTranscription(String transcription) {
@@ -52,7 +52,7 @@ public class Word {
     @Override
     public String toString() {
         return "Word{" +
-                "word='" + content + '\'' +
+                "word='" + word + '\'' +
                 ", transcription='" + transcription + '\'' +
                 ", translation='" + translation + '\'' +
                 '}';
@@ -63,13 +63,13 @@ public class Word {
         if (this == o) return true;
         if (o == null || o.getClass() != getClass()) return false;
         Word anotherWord = (Word) o;
-        return Objects.equals(content, anotherWord.content)
+        return Objects.equals(word, anotherWord.word)
                 && Objects.equals(transcription, anotherWord.transcription)
                 && Objects.equals(translation, anotherWord.translation);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(content, transcription, translation);
+        return Objects.hash(word, transcription, translation);
     }
 }
