@@ -51,7 +51,7 @@ public class TranscriptionAppGUI {
         constraints.gridy = 1;
         constraints.gridwidth = 1;
         inputWords.setLineWrap(true);
-        inputWords.setPreferredSize(new Dimension(300, 300));
+        inputWords.setPreferredSize(new Dimension(300, 250));
         panel.add(inputWords, constraints);
 
         JTextArea outputWords = new JTextArea();
@@ -59,7 +59,7 @@ public class TranscriptionAppGUI {
         constraints.gridy = 1;
         constraints.gridwidth = 1;
         outputWords.setLineWrap(true);
-        outputWords.setPreferredSize(new Dimension(300, 300));
+        outputWords.setPreferredSize(new Dimension(300, 250));
         panel.add(outputWords, constraints);
 
         JButton getTranscriptionButton = new JButton("Get transcription!");
