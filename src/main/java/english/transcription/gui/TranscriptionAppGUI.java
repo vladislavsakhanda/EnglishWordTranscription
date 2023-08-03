@@ -6,30 +6,46 @@ import javax.swing.*;
 import java.awt.*;
 
 public class TranscriptionAppGUI {
-    JFrame frame;
-    JPanel panel;
-    GridBagConstraints constraints;
+    private final JFrame frame = new JFrame("Transcription");
+    private final JPanel panel = new JPanel();
+    private final GridBagConstraints constraints = new GridBagConstraints();
+    private final Dimension screenSize = GraphicsEnvironment.
+            getLocalGraphicsEnvironment().
+            getMaximumWindowBounds().
+            getSize();
 
     public TranscriptionAppGUI() {
         init();
     }
 
     private void init() {
-        frame = new JFrame("Transcription");
-        panel = new JPanel();
-        constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.BOTH;
         panel.setLayout(new GridBagLayout());
 
-        Dimension screenSize = GraphicsEnvironment.
-                getLocalGraphicsEnvironment().
-                getMaximumWindowBounds().
-                getSize();
-        screenSize.width = screenSize.width / 2;
-        screenSize.height = screenSize.height / 2;
+        screenSize.width = (int) (screenSize.width * 0.75);
+        screenSize.height = (int) (screenSize.height * 0.75);
 
-
+        // Create labels
         JLabel input = new JLabel("Input");
+        JLabel output = new JLabel("Output");
+
+        // Create text areas
+        JTextArea inputWords = new JTextArea();
+        JTextArea outputWords = new JTextArea();
+
+        // Create scroll panes
+        JScrollPane inputScrollPane = new JScrollPane(inputWords);
+        JScrollPane outputScrollPane = new JScrollPane(outputWords);
+
+        // Create button
+        JButton getTranscriptionButton = new JButton("Get transcription!");
+
+        // Add components to the panel using GridBagConstraints and adjusting
+        constraints.gridx = 1;
+        constraints.gridy = 2;
+        getTranscriptionButton.addActionListener(new GetTranscriptionListener(inputWords, outputWords));
+        panel.add(getTranscriptionButton, constraints);
+
         constraints.gridx = 0;
         constraints.gridy = 0;
         constraints.gridwidth = 1;
@@ -38,7 +54,6 @@ public class TranscriptionAppGUI {
         constraints.insets = new Insets(0, 20, 20, 200);
         panel.add(input, constraints);
 
-        JLabel output = new JLabel("Output");
         constraints.gridx = 1;
         constraints.gridy = 0;
         constraints.gridwidth = 1;
@@ -46,29 +61,21 @@ public class TranscriptionAppGUI {
         constraints.insets = new Insets(0, 20, 20, 20);
         panel.add(output, constraints);
 
-        JTextArea inputWords = new JTextArea();
         constraints.gridx = 0;
         constraints.gridy = 1;
         constraints.gridwidth = 1;
         inputWords.setLineWrap(true);
-        inputWords.setPreferredSize(new Dimension(300, 250));
-        panel.add(inputWords, constraints);
+        inputScrollPane.setPreferredSize(new Dimension(300, 400));
+        panel.add(inputScrollPane, constraints);
 
-        JTextArea outputWords = new JTextArea();
         constraints.gridx = 1;
         constraints.gridy = 1;
         constraints.gridwidth = 1;
         outputWords.setLineWrap(true);
-        outputWords.setPreferredSize(new Dimension(300, 250));
-        panel.add(outputWords, constraints);
+        outputWords.setEditable(false);
+        outputScrollPane.setPreferredSize(new Dimension(300, 400));
+        panel.add(outputScrollPane, constraints);
 
-        JButton getTranscriptionButton = new JButton("Get transcription!");
-        constraints.gridx = 1;
-        constraints.gridy = 2;
-        getTranscriptionButton.addActionListener(new GetTranscriptionListener(inputWords, outputWords));
-        panel.add(getTranscriptionButton, constraints);
-
-        //
         frame.setSize(screenSize);
         frame.getContentPane().setLayout(new GridBagLayout());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
