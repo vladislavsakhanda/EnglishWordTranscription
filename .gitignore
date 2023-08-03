@@ -5,6 +5,7 @@ target/
 
 src/main/resources/project.properties
 
+
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
