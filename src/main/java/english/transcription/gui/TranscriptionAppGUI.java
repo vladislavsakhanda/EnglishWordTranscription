@@ -65,6 +65,7 @@ public class TranscriptionAppGUI {
         constraints.gridy = 1;
         constraints.gridwidth = 1;
         inputWords.setLineWrap(true);
+
         inputScrollPane.setPreferredSize(new Dimension(300, 400));
         panel.add(inputScrollPane, constraints);
 
@@ -72,6 +73,7 @@ public class TranscriptionAppGUI {
         constraints.gridy = 1;
         constraints.gridwidth = 1;
         outputWords.setLineWrap(true);
+
         outputWords.setEditable(false);
         outputScrollPane.setPreferredSize(new Dimension(300, 400));
         panel.add(outputScrollPane, constraints);
