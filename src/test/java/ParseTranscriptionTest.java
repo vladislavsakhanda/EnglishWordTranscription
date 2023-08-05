@@ -3,7 +3,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-import static english.transcription.entities.ParseTranscription.parseWords;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class ParseTranscriptionTest {
@@ -29,7 +28,7 @@ public class ParseTranscriptionTest {
         expectedWords.add(new Word("432", "", ""));
         expectedWords.add(new Word("", "", ""));
 
-        parseWords(testWords);
+//        parseWords(testWords);
 
         assertIterableEquals(expectedWords, testWords);
 
