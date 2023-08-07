@@ -1,13 +1,13 @@
 package english.transcription.gui.listeners;
 
-import english.transcription.config.SpringConfig;
 import org.jsoup.Jsoup;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,13 +15,22 @@ import java.util.regex.Pattern;
 public class GetTranscriptionListener implements ActionListener {
     private final JTextArea inputWords;
     private final JTextArea outputWords;
-
-    private static final AnnotationConfigApplicationContext context =
-            new AnnotationConfigApplicationContext(SpringConfig.class);
+    private static final Properties properties = new Properties();
+    private static final String PROPERTIES_FILE = "project.properties";
 
     public GetTranscriptionListener(JTextArea inputWords, JTextArea outputWords) {
         this.inputWords = inputWords;
         this.outputWords = outputWords;
+
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE)) {
+            if (inputStream != null) {
+                properties.load(inputStream);
+            } else {
+                throw new RuntimeException("Properties file not found: " + PROPERTIES_FILE);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error loading properties", e);
+        }
     }
 
     @Override
@@ -37,7 +46,7 @@ public class GetTranscriptionListener implements ActionListener {
      * @param input Some text that includes english words
      * @return Text with transcriptions of english words
      **/
-    public static String addTranscriptions (String input) {
+    public static String addTranscriptions(String input) {
         Pattern pattern = Pattern.compile("\\b[A-Za-z]+\\b");
         Matcher matcher = pattern.matcher(input);
 
@@ -70,7 +79,7 @@ public class GetTranscriptionListener implements ActionListener {
     public static String getTranscription(String englishWord) {
         try {
             return Jsoup.connect(
-                            context.getBean(SpringConfig.class).getStringOfSite()
+                            properties.getProperty("transcriptionURL")
                                     + englishWord
                                     + ".html")
                     .get()

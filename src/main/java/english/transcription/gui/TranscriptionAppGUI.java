@@ -10,96 +10,151 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
 public class TranscriptionAppGUI {
-    private final JFrame frame = new JFrame("Transcription");
-    private final JPanel panel = new JPanel();
-    private final GridBagConstraints constraints = new GridBagConstraints();
+    private JFrame frame;
+    private JPanel panel;
+    private GridBagConstraints constraints;
     private final Dimension screenSize = GraphicsEnvironment.
             getLocalGraphicsEnvironment().
             getMaximumWindowBounds().
             getSize();
+    private JLabel input;
+    private JLabel output;
+    private JTextArea inputWords;
+    private JTextArea outputWords;
+    private JScrollPane inputScrollPane;
+    private JScrollPane outputScrollPane;
+    private JButton clearInputWords;
+    private JButton getTranscriptionButton;
+    private JButton getClipboardButton;
+    private static final Dimension buttonSize = new Dimension(200, 50);
+    private JPanel buttonsPanel;
+    private final Font buttonFont = new Font("Arial", Font.BOLD, 16);
+    private final Font titleFont = new Font("Arial", Font.BOLD, 25);
 
     public TranscriptionAppGUI() {
         init();
     }
 
     private void init() {
-        constraints.fill = GridBagConstraints.BOTH;
+        createComponents();
+
+        constraints.fill = GridBagConstraints.CENTER;
         panel.setLayout(new GridBagLayout());
 
         screenSize.width = (int) (screenSize.width * 0.75);
         screenSize.height = (int) (screenSize.height * 0.75);
 
+        addComponents();
+
+        setupFrame();
+    }
+
+    private void createComponents() {
+        // Create frame
+        frame = new JFrame("Transcription");
+
+        // Create GridBagConstraints
+        constraints = new GridBagConstraints();
+
         // Create labels
-        JLabel input = new JLabel("Input");
-        JLabel output = new JLabel("Output");
+        input = new JLabel("Input");
+        output = new JLabel("Output");
 
         // Create text areas
-        JTextArea inputWords = new JTextArea();
-        JTextArea outputWords = new JTextArea();
+        inputWords = new JTextArea();
+        outputWords = new JTextArea();
 
         // Create scroll panes
-        JScrollPane inputScrollPane = new JScrollPane(inputWords);
-        JScrollPane outputScrollPane = new JScrollPane(outputWords);
+        inputScrollPane = new JScrollPane(inputWords);
+        outputScrollPane = new JScrollPane(outputWords);
+
+        // Create panels
+        panel = new JPanel();
+        buttonsPanel = new JPanel();
 
         // Create buttons
-        JButton clearInputWords = new JButton("Clear!");
-        JButton getTranscriptionButton = new JButton("Get transcription!");
-        JButton getClipboardButton = new JButton("Get clipboard!");
+        clearInputWords = new JButton("Clear!");
+        getTranscriptionButton = new JButton("Get transcription!");
+        getClipboardButton = new JButton("Get clipboard!");
+    }
 
-
+    private void addComponents() {
         // Add components to the panel using GridBagConstraints and adjusting
-        constraints.gridx = 2;
-        constraints.gridy = 0;
+        input.setFont(titleFont);
+        constraints.insets = new Insets(0, 0, 20, 0);
+        constraints.gridx = 1;
+        constraints.gridy = 1;
         constraints.gridwidth = 1;
-//        constraints.insets = new Insets(0, 20, 20, 200);
-        input.setFont(new Font("Arial", Font.BOLD, 20));
+//        constraints.anchor = GridBagConstraints.CENTER;
         panel.add(input, constraints);
 
-        constraints.gridx = 5;
-        constraints.gridy = 0;
-        constraints.gridwidth = 3;
-        constraints.anchor = GridBagConstraints.NORTHWEST;
-        output.setFont(new Font("Arial", Font.BOLD, 20));
-        constraints.insets = new Insets(0, 20, 20, 20);
+        output.setFont(titleFont);
+        constraints.insets = new Insets(0, 50, 20, 0);
+        constraints.gridx = 4;
+        constraints.gridy = 1;
+        constraints.gridwidth = 1;
         panel.add(output, constraints);
 
-        constraints.gridx = 0;
-        constraints.gridy = 1;
-        constraints.gridwidth = 3;
-        constraints.anchor = GridBagConstraints.NORTHWEST;
         inputWords.setLineWrap(true);
-        panel.add(inputScrollPane, constraints);
-
-        constraints.gridx = 5;
-        constraints.gridy = 1;
-        constraints.gridwidth = 3;
-        constraints.anchor = GridBagConstraints.NORTHWEST;
-        outputWords.setLineWrap(true);
-        outputWords.setEditable(false);
-        panel.add(outputScrollPane, constraints);
-
-        constraints.gridx = 0;
-        constraints.gridy = 2;
-        constraints.gridwidth = 2;
-        getTranscriptionButton.addActionListener(new GetTranscriptionListener(inputWords, outputWords));
-        panel.add(getTranscriptionButton, constraints);
-
-        constraints.gridx = 4;
-        constraints.gridy = 2;
-        constraints.gridwidth = 2;
-        clearInputWords.addActionListener(e -> inputWords.setText(""));
-        panel.add(clearInputWords, constraints);
-
-        constraints.gridx = 6;
+        constraints.insets = new Insets(0, 0, 20, 0);
+        constraints.gridx = 1;
         constraints.gridy = 2;
         constraints.gridwidth = 1;
+        panel.add(inputScrollPane, constraints);
+
+        outputWords.setLineWrap(true);
+        outputWords.setEditable(false);
+        constraints.insets = new Insets(0, 50, 20, 0);
+        constraints.gridx = 4;
+        constraints.gridy = 2;
+        constraints.gridwidth = 1;
+        panel.add(outputScrollPane, constraints);
+
+        // Adjusting and adding panel of buttons
+        buttonsPanel.setLayout(new GridBagLayout());
+
+        getTranscriptionButton.addActionListener(new GetTranscriptionListener(inputWords, outputWords));
+        getTranscriptionButton.setPreferredSize(buttonSize);
+        getTranscriptionButton.setFont(buttonFont);
+        constraints.insets = new Insets(0, 20, 20, 0);
+        constraints.gridwidth = 1;
+        constraints.gridheight = 1;
+        constraints.gridx = 1;
+        constraints.gridy = 1;
+        buttonsPanel.add(getTranscriptionButton, constraints);
+
+        clearInputWords.addActionListener(e -> inputWords.setText(""));
+        clearInputWords.setPreferredSize(buttonSize);
+        clearInputWords.setFont(buttonFont);
+        constraints.insets = new Insets(0, 20, 20, 0);
+        constraints.gridwidth = 1;
+        constraints.gridheight = 1;
+        constraints.gridx = 1;
+        constraints.gridy = 2;
+        buttonsPanel.add(clearInputWords, constraints);
+
         getClipboardButton.addActionListener(e -> {
             StringSelection stringSelection = new StringSelection(outputWords.getText());
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(stringSelection, null);
         });
-        panel.add(getClipboardButton, constraints);
+        getClipboardButton.setPreferredSize(buttonSize);
+        getClipboardButton.setFont(buttonFont);
+        constraints.insets = new Insets(0, 20, 20, 0);
+        constraints.gridwidth = 1;
+        constraints.gridheight = 1;
+        constraints.gridx = 1;
+        constraints.gridy = 3;
+        buttonsPanel.add(getClipboardButton, constraints);
 
+        constraints.gridx = 7;
+        constraints.gridy = 2;
+        constraints.gridwidth = 1;
+        panel.add(buttonsPanel, constraints);
+
+    }
+
+    private void setupFrame() {
         frame.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -113,7 +168,6 @@ public class TranscriptionAppGUI {
 
         frame.setLocationRelativeTo(null);
         frame.setMinimumSize(new Dimension(screenSize.width, screenSize.height));
-        frame.setSize(screenSize);
         frame.getContentPane().setLayout(new GridBagLayout());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);

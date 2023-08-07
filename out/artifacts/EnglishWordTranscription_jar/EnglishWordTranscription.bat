@@ -1,1 +1,1 @@
-java -jar EnglishWordTranscription.jar
+un
