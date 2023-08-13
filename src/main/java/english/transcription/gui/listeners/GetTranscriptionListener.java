@@ -7,9 +7,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 public class GetTranscriptionListener implements ActionListener {
@@ -35,9 +38,36 @@ public class GetTranscriptionListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String output = addTranscriptions(inputWords.getText());
+        String output = addTranscriptionsParallel(inputWords.getText());
 
         outputWords.setText(output);
+    }
+
+    /**
+     * This method takes a String and provides the transcription for each word in this String using Stream API.
+     *
+     * @param input Some text that includes english words
+     * @return Text with transcriptions of english words
+     **/
+    public static String addTranscriptionsParallel(String input) {
+        String[][] text = Stream.of(input.split("\n"))
+                .map(line -> line.split("\\s"))
+                .toArray(String[][]::new);
+
+        Arrays.parallelSetAll(text, i -> {
+            Arrays.parallelSetAll(text[i], j -> {
+                if (Pattern.matches("\\b[A-Za-z]+\\b", text[i][j])) {
+                    return text[i][j] + " " + getTranscription(text[i][j]);
+                }
+                return text[i][j];
+            });
+
+            return text[i];
+        });
+
+        return Arrays.stream(text)
+                .map(row -> String.join(" ", row))
+                .collect(Collectors.joining("\n"));
     }
 
     /**
