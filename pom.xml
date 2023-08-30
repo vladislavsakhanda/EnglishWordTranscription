@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>my.org</groupId>
-    <artifactId>EnglishWordTranscription</artifactId>
+    <artifactId>EnglishTranscriptor</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>

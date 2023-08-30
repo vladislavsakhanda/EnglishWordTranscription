@@ -18,12 +18,16 @@ import java.util.stream.Stream;
 public class GetTranscriptionListener implements ActionListener {
     private final JTextArea inputWords;
     private final JTextArea outputWords;
+    private final JLabel tickImage;
+    private final JLabel gearImage;
     private static final Properties properties = new Properties();
     private static final String PROPERTIES_FILE = "project.properties";
 
-    public GetTranscriptionListener(JTextArea inputWords, JTextArea outputWords) {
+    public GetTranscriptionListener(JTextArea inputWords, JTextArea outputWords, JLabel tickImage, JLabel gearImage) {
         this.inputWords = inputWords;
         this.outputWords = outputWords;
+        this.tickImage = tickImage;
+        this.gearImage = gearImage;
 
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE)) {
             if (inputStream != null) {
@@ -38,9 +42,27 @@ public class GetTranscriptionListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String output = addTranscriptionsParallel(inputWords.getText());
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                tickImage.setVisible(false);
+                gearImage.setVisible(true);
 
-        outputWords.setText(output);
+                String output = addTranscriptionsParallel(inputWords.getText());
+                outputWords.setText(output);
+
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                tickImage.setVisible(true);
+                gearImage.setVisible(false);
+            }
+        };
+
+        worker.execute();
+
     }
 
     /**
@@ -49,7 +71,7 @@ public class GetTranscriptionListener implements ActionListener {
      * @param input Some text that includes english words
      * @return Text with transcriptions of english words
      **/
-    public static String addTranscriptionsParallel(String input) {
+    private static String addTranscriptionsParallel(String input) {
         String[][] text = Stream.of(input.split("\n"))
                 .map(line -> line.split("\\s"))
                 .toArray(String[][]::new);
@@ -76,7 +98,8 @@ public class GetTranscriptionListener implements ActionListener {
      * @param input Some text that includes english words
      * @return Text with transcriptions of english words
      **/
-    public static String addTranscriptions(String input) {
+    @Deprecated
+    private static String addTranscriptions(String input) {
         Pattern pattern = Pattern.compile("\\b[A-Za-z]+\\b");
         Matcher matcher = pattern.matcher(input);
 
@@ -106,16 +129,15 @@ public class GetTranscriptionListener implements ActionListener {
      * @param englishWord String in English
      * @return Transcription for a word in format "|transcription|"
      **/
-    public static String getTranscription(String englishWord) {
+    private static String getTranscription(String englishWord) {
         try {
-            return Jsoup.connect(
-                            properties.getProperty("transcriptionURL")
-                                    + englishWord
-                                    + ".html")
+            return Jsoup.connect(String.format("%s%s.html",
+                            properties.getProperty("transcriptionURL"), englishWord))
                     .get()
                     .getElementsByClass("dict_transcription")
                     .text();
         } catch (IOException e) {
+            System.out.println(e.getMessage());
             return null;
         }
     }

@@ -2,12 +2,17 @@ package english.transcription.gui;
 
 import english.transcription.gui.listeners.GetTranscriptionListener;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.net.URL;
+import java.util.Objects;
 
 public class TranscriptionAppGUI {
     private JFrame frame;
@@ -30,6 +35,13 @@ public class TranscriptionAppGUI {
     private JPanel buttonsPanel;
     private final Font buttonFont = new Font("Arial", Font.BOLD, 16);
     private final Font titleFont = new Font("Arial", Font.BOLD, 25);
+    private final Font textFont = new Font("Arial", Font.PLAIN, 14);
+    private final ImageIcon successIcon = new ImageIcon("target/classes/images/tick.png");
+    private JLabel tickImage;
+    private JLabel gearImage;
+    private ImageIcon tickIcon;
+    private ImageIcon gearIcon;
+    private final ClassLoader classLoader = getClass().getClassLoader();
 
     public TranscriptionAppGUI() {
         init();
@@ -76,6 +88,10 @@ public class TranscriptionAppGUI {
         clearInputWords = new JButton("Clear!");
         getTranscriptionButton = new JButton("Get transcription!");
         getClipboardButton = new JButton("Get clipboard!");
+
+        // Create icons
+        tickIcon = new ImageIcon(Objects.requireNonNull(classLoader.getResource("images/tick.png")));
+        gearIcon = new ImageIcon(Objects.requireNonNull(classLoader.getResource("images/gear.gif")));
     }
 
     private void addComponents() {
@@ -85,7 +101,6 @@ public class TranscriptionAppGUI {
         constraints.gridx = 1;
         constraints.gridy = 1;
         constraints.gridwidth = 1;
-//        constraints.anchor = GridBagConstraints.CENTER;
         panel.add(input, constraints);
 
         output.setFont(titleFont);
@@ -96,6 +111,7 @@ public class TranscriptionAppGUI {
         panel.add(output, constraints);
 
         inputWords.setLineWrap(true);
+        inputWords.setFont(textFont);
         constraints.insets = new Insets(0, 0, 20, 0);
         constraints.gridx = 1;
         constraints.gridy = 2;
@@ -104,6 +120,7 @@ public class TranscriptionAppGUI {
 
         outputWords.setLineWrap(true);
         outputWords.setEditable(false);
+        outputWords.setFont(textFont);
         constraints.insets = new Insets(0, 50, 20, 0);
         constraints.gridx = 4;
         constraints.gridy = 2;
@@ -113,7 +130,20 @@ public class TranscriptionAppGUI {
         // Adjusting and adding panel of buttons
         buttonsPanel.setLayout(new GridBagLayout());
 
-        getTranscriptionButton.addActionListener(new GetTranscriptionListener(inputWords, outputWords));
+        constraints.gridwidth = 1;
+        constraints.gridheight = 1;
+        constraints.gridx = 2;
+        constraints.gridy = 1;
+        tickIcon = resizeImageIcon(tickIcon,60, 60);
+        gearIcon = resizeImageIcon(gearIcon,60, 60);
+        tickImage = new JLabel(tickIcon);
+        gearImage = new JLabel(gearIcon);
+        tickImage.setVisible(false);
+        gearImage.setVisible(false);
+        buttonsPanel.add(tickImage, constraints);
+        buttonsPanel.add(gearImage, constraints);
+
+        getTranscriptionButton.addActionListener(new GetTranscriptionListener(inputWords, outputWords, tickImage, gearImage));
         getTranscriptionButton.setPreferredSize(buttonSize);
         getTranscriptionButton.setFont(buttonFont);
         constraints.insets = new Insets(0, 20, 20, 0);
@@ -147,11 +177,16 @@ public class TranscriptionAppGUI {
         constraints.gridy = 3;
         buttonsPanel.add(getClipboardButton, constraints);
 
-        constraints.gridx = 7;
+        constraints.gridx = 5;
         constraints.gridy = 2;
         constraints.gridwidth = 1;
         panel.add(buttonsPanel, constraints);
+    }
 
+    private static ImageIcon resizeImageIcon(ImageIcon icon, int width, int height) {
+        Image image = icon.getImage();
+        Image resizedImage = image.getScaledInstance(width, height, Image.SCALE_DEFAULT);
+        return new ImageIcon(resizedImage);
     }
 
     private void setupFrame() {
