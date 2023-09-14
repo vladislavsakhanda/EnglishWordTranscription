@@ -81,7 +81,7 @@ public class GetTranscriptionListener implements ActionListener {
 
         Arrays.parallelSetAll(text, i -> {
             Arrays.parallelSetAll(text[i], j -> {
-                if (Arrays.stream(ignoringWords).parallel().noneMatch(ignoringWord -> ignoringWord.equals(text[i][j])) &&
+                if (Arrays.stream(ignoringWords).parallel().noneMatch(ignoringWord -> ignoringWord.equalsIgnoreCase(text[i][j])) &&
                         Pattern.matches("\\b[A-Za-z]+\\b", text[i][j])) {
                     return text[i][j] + " " + getTranscription(text[i][j]);
                 }
