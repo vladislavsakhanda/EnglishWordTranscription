@@ -1,5 +1,6 @@
 package english.transcription.gui.listeners;
 
+import english.transcription.gui.components.TFrame;
 import org.jsoup.Jsoup;
 
 import javax.swing.*;
@@ -76,9 +77,12 @@ public class GetTranscriptionListener implements ActionListener {
                 .map(line -> line.split("\\s"))
                 .toArray(String[][]::new);
 
+        String[] ignoringWords = TFrame.getIgnoringWords().split("\\s+");
+
         Arrays.parallelSetAll(text, i -> {
             Arrays.parallelSetAll(text[i], j -> {
-                if (Pattern.matches("\\b[A-Za-z]+\\b", text[i][j])) {
+                if (Arrays.stream(ignoringWords).parallel().noneMatch(ignoringWord -> ignoringWord.equals(text[i][j])) &&
+                        Pattern.matches("\\b[A-Za-z]+\\b", text[i][j])) {
                     return text[i][j] + " " + getTranscription(text[i][j]);
                 }
                 return text[i][j];

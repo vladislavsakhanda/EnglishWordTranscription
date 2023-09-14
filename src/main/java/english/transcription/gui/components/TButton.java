@@ -41,10 +41,11 @@ public class TButton {
         popupMenu.add(secondItem);
 
         firstItem.addActionListener(e ->
-                JOptionPane.showMessageDialog(null, "Ви вибрали Пункт 1"));
+        {
+            TFrame.invokeIgnoringWordsFrame();
+        });
 
-        secondItem.addActionListener(e ->
-                JOptionPane.showMessageDialog(null, "Ви вибрали Пункт 2"));
+        secondItem.addActionListener(e -> System.exit(0));
 
         JButton menuButton = new JButton("Menu");
         adjustMenuButton(menuButton);
@@ -53,9 +54,11 @@ public class TButton {
         menuButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                if (SwingUtilities.isLeftMouseButton(e)) { // Перевірка лівої клавіші миші
+                popupMenu.setVisible(false);
+                e.consume();
+
+                if (SwingUtilities.isLeftMouseButton(e) || SwingUtilities.isRightMouseButton(e)) {
                     Component mouseComponent = e.getComponent();
-                    System.out.println(mouseComponent);
                     popupMenu.setSize(mouseComponent.getPreferredSize().width, popupMenu.getHeight());
                     popupMenu.show(mouseComponent, 0,
                             (int) (mouseComponent.getAlignmentY() + mouseComponent.getHeight() * 1.05));
