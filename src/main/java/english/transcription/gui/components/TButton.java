@@ -8,8 +8,22 @@ import java.awt.event.MouseEvent;
 public class TButton {
     private static final Dimension commonButtonSize = new Dimension(200, 50);
     private static final Font commonButtoFont = new Font("Arial", Font.BOLD, 16);
-    private static final Dimension menuButtonSize = new Dimension(100, 30);
-    private static final Font menuButtoFont = new Font("Arial", Font.BOLD, 13);
+    private static final Dimension menuButtonSize = new Dimension(120, 40);
+    private static final Font menuButtoFont = new Font("Arial", Font.BOLD, 15);
+    private static final Dimension chooseTranscriptionButtonSize = new Dimension(130, 30);
+    private static final Font chooseTranscriptionButtoFont = new Font("Arial", Font.BOLD, 12);
+
+    public static void adjustChooseTranscriptionButton(JButton jButton) {
+        jButton.setPreferredSize(chooseTranscriptionButtonSize);
+        jButton.setFont(chooseTranscriptionButtoFont);
+        jButton.setFocusable(false);
+    }
+
+    public static JButton createChooseTranscriptionButton(String text) {
+        JButton button = new JButton(text);
+        adjustChooseTranscriptionButton(button);
+        return button;
+    }
 
     public static void adjustCommonButton(JButton jButton) {
         jButton.setPreferredSize(commonButtonSize);

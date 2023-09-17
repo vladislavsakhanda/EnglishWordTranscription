@@ -9,7 +9,10 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.Properties;
+import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -21,14 +24,16 @@ public class GetTranscriptionListener implements ActionListener {
     private final JTextArea outputWords;
     private final JLabel tickImage;
     private final JLabel gearImage;
+    private final JButton chooseUK;
     private static final Properties properties = new Properties();
     private static final String PROPERTIES_FILE = "project.properties";
 
-    public GetTranscriptionListener(JTextArea inputWords, JTextArea outputWords, JLabel tickImage, JLabel gearImage) {
+    public GetTranscriptionListener(JTextArea inputWords, JTextArea outputWords, JLabel tickImage, JLabel gearImage, JButton chooseUK) {
         this.inputWords = inputWords;
         this.outputWords = outputWords;
         this.tickImage = tickImage;
         this.gearImage = gearImage;
+        this.chooseUK = chooseUK;
 
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE)) {
             if (inputStream != null) {
@@ -45,11 +50,14 @@ public class GetTranscriptionListener implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
             @Override
-            protected Void doInBackground() throws Exception {
+            protected Void doInBackground() {
                 tickImage.setVisible(false);
                 gearImage.setVisible(true);
 
-                String output = addTranscriptionsParallel(inputWords.getText());
+                UnaryOperator<String> getTranscriptionFunction =
+                        chooseUK.isEnabled() ? GetTranscriptionListener::getTranscriptionUS : GetTranscriptionListener::getTranscriptionUK;
+
+                String output = addTranscriptionsParallel(inputWords.getText(), getTranscriptionFunction);
                 outputWords.setText(output);
 
                 return null;
@@ -63,7 +71,6 @@ public class GetTranscriptionListener implements ActionListener {
         };
 
         worker.execute();
-
     }
 
     /**
@@ -72,7 +79,7 @@ public class GetTranscriptionListener implements ActionListener {
      * @param input Some text that includes english words
      * @return Text with transcriptions of english words
      **/
-    private static String addTranscriptionsParallel(String input) {
+    private static String addTranscriptionsParallel(String input, UnaryOperator<String> getTranscription) {
         String[][] text = Stream.of(input.split("\n"))
                 .map(line -> line.split("\\s"))
                 .toArray(String[][]::new);
@@ -83,7 +90,9 @@ public class GetTranscriptionListener implements ActionListener {
             Arrays.parallelSetAll(text[i], j -> {
                 if (Arrays.stream(ignoringWords).parallel().noneMatch(ignoringWord -> ignoringWord.equalsIgnoreCase(text[i][j])) &&
                         Pattern.matches("\\b[A-Za-z]+\\b", text[i][j])) {
-                    return text[i][j] + " " + getTranscription(text[i][j]);
+                    String transcription = getTranscription.apply((text[i][j]));
+                    return transcription.equals("")
+                            ? text[i][j] : text[i][j] + " " + transcription;
                 }
                 return text[i][j];
             });
@@ -112,7 +121,7 @@ public class GetTranscriptionListener implements ActionListener {
 
         while (matcher.find()) {
             String currentWord = matcher.group();
-            String transcription = getTranscription(currentWord);
+            String transcription = getTranscriptionUK(currentWord);
 
             if (transcription != null) {
                 replacedText.append(input, lastMatchEnd, matcher.start());
@@ -131,18 +140,44 @@ public class GetTranscriptionListener implements ActionListener {
      * This method takes a String and provides the transcription it.
      *
      * @param englishWord String in English
-     * @return Transcription for a word in format "|transcription|"
+     * @return UK transcription for a word in format "|transcription|"
      **/
-    private static String getTranscription(String englishWord) {
+    private static String getTranscriptionUK(String englishWord) {
+
         try {
-            return Jsoup.connect(String.format("%s%s.html",
+            String text = Jsoup.connect(String.format("%s%s",
                             properties.getProperty("transcriptionURL"), englishWord))
+                    .timeout(5000)
                     .get()
-                    .getElementsByClass("dict_transcription")
+                    .getElementsByClass("pronWR tooltip pronWidget")
                     .text();
+
+            return Objects.equals(text, "") ? "" : text.substring(text.indexOf('/'), text.lastIndexOf('/') + 1).replace('/', '|');
         } catch (IOException e) {
             System.out.println(e.getMessage());
-            return null;
+            return "";
+        }
+    }
+
+    /**
+     * This method takes a String and provides the transcription it.
+     *
+     * @param englishWord String in English
+     * @return US transcription for a word in format "|transcription|"
+     **/
+    private static String getTranscriptionUS(String englishWord) {
+        try {
+            String text = Jsoup.connect(String.format("%s%s",
+                            properties.getProperty("transcriptionURL"), englishWord))
+                    .timeout(5000)
+                    .get()
+                    .getElementsByClass("pronRH tooltip pronWidget")
+                    .text();
+
+            return Objects.equals(text, "") ? "" : text.substring(text.indexOf('/'), text.lastIndexOf('/') + 1).replace('/', '|');
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            return "";
         }
     }
 }

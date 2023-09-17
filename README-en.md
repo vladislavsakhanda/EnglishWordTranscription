@@ -1,38 +1,32 @@
 <h1 align="center">English Transcriptor</h1>
 
-## Мета цього проекту
+## Project Goal
 
-Розробити зручний додаток для отримання транскрипцій англійських слів. 
-Тепер, замість постійного перевіряння кожного слова окремо в Інтернеті, користувачі можуть одразу отримувати транскрипції для багатьох слів одночасно. 
-Це особливо зручно для тих, хто вивчає англійську мову, оскільки дозволяє ефективно опановувати вимову слів без витрати дорогоцінного часу на пошук інформації.
+Develop a convenient application for obtaining transcriptions of English words. Now, instead of constantly checking each word individually on the Internet, users can immediately get transcriptions for many words at once. This is especially useful for those who are learning the English language, as it allows for efficient pronunciation practice without spending precious time searching for information.
 
-## Як користуватись?
+## How to Use
 
-Застосунок має два текстові блоки для вводу тексту та його виводу.
-Після введення тексту, Ви можете натиснути кнопку **"Get transcription!"**, 
-після чого програма почне шукати транскрипції для всіх англійських слів, які були в тексті. 
-Як результат в полі виводу буде отриманий попередній текст з транскрипціями. 
+The application has two text blocks for input and output. After entering text, you can press the **"Get transcription!"** button, after which the program will start searching for transcriptions for all English words in the text. As a result, the output field will display the original text with transcriptions.
 
-Можна вибрати які саме транскрипції застосунок буде шукати: **UK** або **US**.
-Викликавши **Menu**, можна зайти в **Ignoring words** та додати слова, які будуть проігноравані при пошуку транскрипційю
+You can choose which transcriptions the application will search for: **UK** or **US**. By clicking **Menu**, you can go to **Ignoring words** and add words that will be ignored when searching for transcriptions.
 
-## Вимоги до встановлення
+## Installation Requirements
 
-Для коректної роботи застосунку має бути встановлено jdk 17 або вище.
+For the application to work correctly, you need to have JDK 17 or higher installed.
 
-## Виконавчий файл
+## Executable File
 
-Робоча версія застосунку знаходиться за шляхом out/artifacts/EnglishTranscriptor_jar/EnglishTranscriptor.jar
+The working version of the application can be found at out/artifacts/EnglishTranscriptor_jar/EnglishTranscriptor.jar.
 
-## Технологічний стек
+## Technology Stack
 
 - Java 17
 - Maven
-- Swing (для інтерфейсу користувача)
-- Jsoup (для отримання даних з Інтернету)
-- Stream API (для обробки даних у потоковому режимі)
+- Swing (for the user interface)
+- Jsoup (for retrieving data from the Internet)
+- Stream API (for data processing in streaming mode)
 
-## Пропоную додати такі винятки до ігноруємих слів:
+## Suggested Additions to Ignored Words
 
 a an the
 
@@ -46,7 +40,7 @@ would must
 
 let so have this these take get break
 
-## Приклад
+## Example
 
 ![Main Frame](assets/appScreen1.png)
 

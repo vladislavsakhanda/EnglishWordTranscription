@@ -15,6 +15,7 @@ import java.util.Objects;
 import static english.transcription.gui.components.TButton.*;
 
 public class TranscriptionAppGUI {
+    private static JButton chooseUK;
     private JFrame mainFrame;
     private JPanel mainPanel;
     private GridBagConstraints constraints;
@@ -70,6 +71,15 @@ public class TranscriptionAppGUI {
         JButton menu = createMenuButton();
         mainPanel.add(menu, constraints);
 
+        constraints.weightx = 1.0;
+        constraints.weighty = 1.0;
+        constraints.fill = GridBagConstraints.NORTHEAST;
+        constraints.gridx = 5;
+        constraints.gridy = 0;
+        JPanel chooseTranscriptionPanel = getChooseTranscriptionPanel();
+
+        mainPanel.add(chooseTranscriptionPanel, constraints);
+
         // Add components to the panel using GridBagConstraints and adjusting
         input.setFont(TFont.titleFont);
         constraints.insets = new Insets(0, 0, 20, 0);
@@ -109,6 +119,29 @@ public class TranscriptionAppGUI {
         mainPanel.add(buttonsPanel, constraints);
     }
 
+    private static JPanel getChooseTranscriptionPanel() {
+        JPanel chooseTranscriptionPanel = new JPanel();
+
+        chooseUK = createChooseTranscriptionButton("UK transcription");
+        chooseUK.setEnabled(false);
+        JButton chooseUS = createChooseTranscriptionButton("US transcription");
+
+        chooseUK.addActionListener(l -> {
+            chooseUK.setEnabled(false);
+            chooseUS.setEnabled(true);
+        });
+
+        chooseUS.addActionListener(l -> {
+            chooseUK.setEnabled(true);
+            chooseUS.setEnabled(false);
+        });
+
+        chooseTranscriptionPanel.add(chooseUK);
+        chooseTranscriptionPanel.add(chooseUS);
+
+        return chooseTranscriptionPanel;
+    }
+
     private JPanel creatingButtonsPanel() {
         JPanel newButtonsPanel = new JPanel();
 
@@ -131,7 +164,7 @@ public class TranscriptionAppGUI {
         newButtonsPanel.add(gearImage, constraints);
 
         JButton getTranscriptionButton = TButton.createCommonButton("Get transcription!");
-        getTranscriptionButton.addActionListener(new GetTranscriptionListener(inputWords, outputWords, tickImage, gearImage));
+        getTranscriptionButton.addActionListener(new GetTranscriptionListener(inputWords, outputWords, tickImage, gearImage, chooseUK));
         constraints.insets = new Insets(0, 20, 20, 0);
         constraints.gridwidth = 1;
         constraints.gridheight = 1;
@@ -175,12 +208,12 @@ public class TranscriptionAppGUI {
         mainFrame.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                int width = (int) (mainFrame.getWidth() * 0.2);
-                int height = (int) (mainFrame.getHeight() * 0.5);
+                int width = (int) (mainFrame.getWidth() * 0.25);
+                int height = (int) (mainFrame.getHeight() * 0.6);
                 inputScrollPane.setPreferredSize(new Dimension(width, height));
-                inputScrollPane.setMaximumSize(new Dimension(width, height));
+                inputScrollPane.setMinimumSize(new Dimension(width, height));
                 outputScrollPane.setPreferredSize(new Dimension(width, height));
-                outputScrollPane.setMaximumSize(new Dimension(width, height));
+                outputScrollPane.setMinimumSize(new Dimension(width, height));
                 mainPanel.revalidate();
             }
         });
