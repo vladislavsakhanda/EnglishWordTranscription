@@ -16,7 +16,7 @@ For the application to work correctly, you need to have JDK 17 or higher install
 
 ## Executable File
 
-The working version of the application can be found at out/artifacts/EnglishTranscriptor_jar/EnglishTranscriptor.jar.
+The working version of the application can be found at **app/EnglishTranscriptor.jar**.
 
 ## Technology Stack
 

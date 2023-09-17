@@ -22,7 +22,7 @@
 
 ## Виконавчий файл
 
-Робоча версія застосунку знаходиться за шляхом out/artifacts/EnglishTranscriptor_jar/EnglishTranscriptor.jar
+Робоча версія застосунку знаходиться за шляхом **app/EnglishTranscriptor.jar**.
 
 ## Технологічний стек
 
