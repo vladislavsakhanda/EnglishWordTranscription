@@ -6,6 +6,6 @@
 
 #### ** Ukrainian Version **
 
-[Читати українською](README-uk.md)
+[Читати українською](README-ua.md)
 
 <!-- tabs:end -->
